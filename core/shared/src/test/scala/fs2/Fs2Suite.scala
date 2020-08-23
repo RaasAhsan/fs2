@@ -1,9 +1,12 @@
 package fs2
 
-import scala.concurrent.{ExecutionContext, Future}
+import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
 
+import scala.concurrent.{ExecutionContext, Future}
 import cats.effect.{IO, Sync, SyncIO}
 import cats.effect.unsafe.IORuntime
+import cats.effect.unsafe.IORuntime.{createDefaultBlockingExecutionContext, createDefaultScheduler}
 import cats.implicits._
 import munit.{Location, ScalaCheckEffectSuite}
 import org.typelevel.discipline.Laws
@@ -17,7 +20,25 @@ abstract class Fs2Suite extends ScalaCheckEffectSuite with TestPlatform with Gen
 
   override def munitFlakyOK = true
 
-  implicit val ioRuntime: IORuntime = IORuntime.global
+  def createDefaultComputeExecutionContex(threadPrefix: String = "io-compute"): (ExecutionContext, () => Unit) = {
+    val threadCount = new AtomicInteger(0)
+    val executor = Executors.newFixedThreadPool(
+      Runtime.getRuntime().availableProcessors() * 2,
+      { (r: Runnable) =>
+        val t = new Thread(r)
+        t.setName(s"${threadPrefix}-${threadCount.getAndIncrement()}")
+        t.setDaemon(true)
+        t
+      }
+    )
+    (ExecutionContext.fromExecutor(executor), { () => executor.shutdown() })
+  }
+
+  implicit val ioRuntime: IORuntime = IORuntime(
+    createDefaultComputeExecutionContex()._1,
+    createDefaultBlockingExecutionContext()._1,
+    createDefaultScheduler()._1,
+    () => ())
 
   override val munitExecutionContext: ExecutionContext = ExecutionContext.global
 
