@@ -10,8 +10,8 @@ addCommandAlias(
   "fmtCheck",
   "; compile:scalafmtCheck; test:scalafmtCheck; it:scalafmtCheck; scalafmtSbtCheck"
 )
-addCommandAlias("testJVM", ";coreJVM/test;io/test;reactiveStreams/test;benchmark/test")
-addCommandAlias("testJS", "coreJS/test")
+addCommandAlias("testJVM", ";coreJVM/testOnly *.StreamSuite")
+addCommandAlias("testJS", "coreJS/compile")
 
 crossScalaVersions in ThisBuild := Seq("2.13.2", "2.12.10", "0.26.0-RC1")
 scalaVersion in ThisBuild := crossScalaVersions.value.head
