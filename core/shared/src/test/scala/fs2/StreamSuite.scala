@@ -362,13 +362,13 @@ class StreamSuite extends Fs2Suite {
     def constantStream: Stream[IO, Int] =
       if (isJVM) Stream.constant(1) else Stream.constant(1).evalTap(_ => IO.sleep(1.milli))
 
-    test("constant")(testCancelation(constantStream))
-
-    test("bracketed stream") {
-      testCancelation(
-        Stream.bracket(IO.unit)(_ => IO.unit).flatMap(_ => constantStream)
-      )
-    }
+//    test("constant")(testCancelation(constantStream))
+//
+//    test("bracketed stream") {
+//      testCancelation(
+//        Stream.bracket(IO.unit)(_ => IO.unit).flatMap(_ => constantStream)
+//      )
+//    }
 
     test("concurrently") {
       testCancelation {
