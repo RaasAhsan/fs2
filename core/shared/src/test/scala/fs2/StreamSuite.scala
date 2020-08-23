@@ -374,7 +374,7 @@ class StreamSuite extends Fs2Suite {
 
     test("concurrently") {
       testCancelation {
-        Stream.eval[IO, Unit](IO(println("Hello"))).repeat.concurrently(Stream.constant[IO, Int](1))
+        Stream.eval[IO, Unit](IO(())).repeat.concurrently(Stream.constant[IO, Int](1))
       }
     }
 
