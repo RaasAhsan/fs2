@@ -576,10 +576,15 @@ final class Stream[+F[_], +O] private[fs2] (private val underlying: Pull[F, O, U
         }
 
       // stop background process but await for it to finalise with a result
-      val stopBack: F2[Unit] = IO(println("running finalizer")) *> interrupt.complete(()).attempt >> doneR.get.flatMap { e =>
-        println("Got cancelled!")
-        ApplicativeError[F2, Throwable].fromEither(e)
-      }
+      val stopBack: F2[Unit] =
+        implicitly[ConcurrentThrow[F2]].pure(3).map(_ => {
+          println("running finalizer")
+          ()
+        }) *> interrupt.complete(()).attempt >> doneR.get.flatMap {
+          e =>
+            println("Got cancelled!")
+            ApplicativeError[F2, Throwable].fromEither(e)
+        }
 
       Stream.bracket(Concurrent[F2].start(runR))(_ => stopBack) >>
         this.interruptWhen(interrupt.get.attempt)
