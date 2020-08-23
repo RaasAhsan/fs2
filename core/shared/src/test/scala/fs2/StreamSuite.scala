@@ -1,7 +1,6 @@
 package fs2
 
 import scala.concurrent.duration._
-
 import cats.data.Chain
 import cats.effect.{IO, Outcome, Resource, SyncIO}
 import cats.effect.concurrent.{Deferred, Ref}
@@ -10,7 +9,6 @@ import org.scalacheck.Gen
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Prop.forAll
 import org.scalacheck.effect.PropF.forAllF
-
 import fs2.concurrent.{Queue, SignallingRef}
 
 class StreamSuite extends Fs2Suite {
@@ -374,7 +372,7 @@ class StreamSuite extends Fs2Suite {
 
     test("concurrently") {
       testCancelation {
-        Stream.constant[IO, Int](1).concurrently(Stream.constant[IO, Int](1))
+        constantStream.concurrently(Stream.empty)
       }
     }
 
