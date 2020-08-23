@@ -354,7 +354,7 @@ class StreamSuite extends Fs2Suite {
 
   group("cancelation of compiled streams") {
     def startAndCancelSoonAfter[A](fa: IO[A]): IO[Unit] =
-      fa.start.flatMap(fiber => IO.sleep(1.second) >> fiber.cancel)
+      fa.start.flatMap(fiber => IO.sleep(1.second) >> IO(println("STARTING TO CANCEL")) >> fiber.cancel)
 
     def testCancelation[A](s: Stream[IO, A]): IO[Unit] =
       startAndCancelSoonAfter(s.compile.drain)
