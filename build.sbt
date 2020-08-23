@@ -16,7 +16,7 @@ addCommandAlias("testJS", "coreJS/compile")
 crossScalaVersions in ThisBuild := Seq("2.13.2", "2.12.10", "0.26.0-RC1")
 scalaVersion in ThisBuild := crossScalaVersions.value.head
 
-githubWorkflowJavaVersions in ThisBuild := Seq("adopt@1.11")
+githubWorkflowJavaVersions in ThisBuild := Seq("adopt@1.8")
 githubWorkflowPublishTargetBranches in ThisBuild := Seq(RefPredicate.Equals(Ref.Branch("main")))
 githubWorkflowBuild in ThisBuild := Seq(
   WorkflowStep.Sbt(List("fmtCheck", "compile")),
