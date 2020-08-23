@@ -562,18 +562,18 @@ final class Stream[+F[_], +O] private[fs2] (private val underlying: Pull[F, O, U
       interrupt <- Deferred[F2, Unit]
       doneR <- Deferred[F2, Either[Throwable, Unit]]
     } yield {
-//      def runR: F2[Unit] =
-//        that.interruptWhen(interrupt.get.attempt).compile.drain.attempt.flatMap { r =>
-//          println(s"Reached the end: ${r}")
-//          doneR.complete(r) >> {
-//            if (r.isLeft)
-//              interrupt
-//                .complete(())
-//                .attempt
-//                .void // interrupt only if this failed otherwise give change to `this` to finalize
-//            else Applicative[F2].unit
-//          }
-//        }
+      def runR: F2[Unit] =
+        that.interruptWhen(interrupt.get.attempt).compile.drain.attempt.flatMap { r =>
+          println("Reached the end!")
+          doneR.complete(r) >> {
+            if (r.isLeft)
+              interrupt
+                .complete(())
+                .attempt
+                .void // interrupt only if this failed otherwise give change to `this` to finalize
+            else Applicative[F2].unit
+          }
+        }
 
       // stop background process but await for it to finalise with a result
       val stopBack: F2[Unit] =
@@ -586,8 +586,7 @@ final class Stream[+F[_], +O] private[fs2] (private val underlying: Pull[F, O, U
             ApplicativeError[F2, Throwable].fromEither(e)
         }
 
-      val C = Concurrent[F2]
-      Stream.bracket(C.start(C.uncancelable(_ => C.never[Unit])))(_ => stopBack) >>
+      Stream.bracket(Concurrent[F2].start(runR))(_ => stopBack) >>
         this.interruptWhen(interrupt.get.attempt)
     }
 
