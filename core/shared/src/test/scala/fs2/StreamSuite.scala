@@ -374,7 +374,7 @@ class StreamSuite extends Fs2Suite {
 
     test("concurrently") {
       testCancelation {
-        constantStream.concurrently(constantStream)
+        constantStream.concurrently(Stream.constant(1).evalTap(_ => IO.sleep(1.milli)))
       }
     }
 
