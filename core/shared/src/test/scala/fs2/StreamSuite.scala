@@ -374,13 +374,13 @@ class StreamSuite extends Fs2Suite {
 
     test("concurrently") {
       testCancelation {
-        Stream.constant(1).concurrently(Stream.constant(1))
+        Stream.constant[IO, Int](1).concurrently(Stream[IO, Int](1).evalTap(_ => IO.sleep(1.milli)))
       }
     }
 
     test("merge") {
       testCancelation {
-        constantStream.merge(Stream.constant(1).evalTap(_ => IO.sleep(1.milli)))
+        constantStream.merge(constantStream)
       }
     }
 
