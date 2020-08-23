@@ -564,7 +564,7 @@ final class Stream[+F[_], +O] private[fs2] (private val underlying: Pull[F, O, U
     } yield {
       def runR: F2[Unit] =
         that.interruptWhen(interrupt.get.attempt).compile.drain.attempt.flatMap { r =>
-          println("Reached the end!")
+          println(s"Reached the end: ${r}")
           doneR.complete(r) >> {
             if (r.isLeft)
               interrupt
