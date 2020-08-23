@@ -380,7 +380,7 @@ class StreamSuite extends Fs2Suite {
 
     test("concurrently") {
       testCancelation {
-        Stream.constant[IO, Int](1).concurrently(Stream.constant[IO, Int](1))
+        Stream.constant[IO, Int](1).concurrently(Stream.eval(IO.cede *> IO.pure(3)) ++ Stream.constant[IO, Int](1))
       }
     }
 
