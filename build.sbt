@@ -308,7 +308,7 @@ lazy val root = project
   .settings(commonSettings)
   .settings(mimaSettings)
   .settings(noPublish)
-  .aggregate(coreJVM, reactiveStreams, benchmark)
+  .aggregate(coreJVM)
 
 lazy val IntegrationTest = config("it").extend(Test)
 
@@ -453,4 +453,4 @@ lazy val microsite = project
     )
   )
   .settings(mdocSettings)
-  .dependsOn(coreJVM, io, reactiveStreams)
+  .dependsOn(coreJVM, reactiveStreams)
