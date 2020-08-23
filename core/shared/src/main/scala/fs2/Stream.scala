@@ -586,7 +586,8 @@ final class Stream[+F[_], +O] private[fs2] (private val underlying: Pull[F, O, U
             ApplicativeError[F2, Throwable].fromEither(e)
         }
 
-      Stream.bracket(Concurrent[F2].start(runR))(_ => stopBack) >>
+      val C = Concurrent[F2]
+      Stream.bracket(C.start(C.uncancelable(_ => C.never[Unit])))(_ => stopBack) >>
         this.interruptWhen(interrupt.get.attempt)
     }
 
