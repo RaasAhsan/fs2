@@ -372,7 +372,7 @@ class StreamSuite extends Fs2Suite {
 
     test("concurrently") {
       testCancelation {
-        constantStream.concurrently(Stream.empty)
+        constantStream.concurrently(constantStream)
       }
     }
 
